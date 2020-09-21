@@ -1,0 +1,26 @@
+{
+  "name": "edc-popover-js",
+  "version": "1.0.0-beta-0",
+  "description": "Popover component for edc to display contextual help",
+  "main": "./dist/edc-popover-js.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tech-advantage/edc-popover-js.git"
+  },
+  "keywords": [
+    "edc",
+    "popover",
+    "contextual help"
+  ],
+  "author": "TAD",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tech-advantage/edc-popover-js/issues"
+  },
+  "homepage": "https://github.com/tech-advantage/edc-popover-js#readme"
+}
