@@ -1,0 +1,27 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "declaration": false,
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "types": [
+      "jest",
+      "puppeteer",
+      "jest-environment-puppeteer",
+      "expect-puppeteer"
+    ],
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
