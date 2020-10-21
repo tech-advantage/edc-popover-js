@@ -1,1 +1,40 @@
-.edc-help {}
+@import (inline) '../node_modules/edc-popover-utils/dist/edc-popover.css';
+
+@icon-idle-color: lightgray;
+@icon-hover-color: rgb(60, 141, 188);
+@on-dark-color: rgba(0, 0, 0, .3);
+@on-dark-hover-color: white;
+@icon-disabled-color: rgb(211, 211, 211);
+@icon-error-color: rgb(210, 30, 30);
+
+@icon-disabled-opacity: 0.6;
+
+.edc-help {
+  line-height: 34px;
+  font-size: 16px;
+  padding-right: 5px;
+  .edc-help-icon {
+    cursor: pointer;
+    color: @icon-idle-color;
+    &:hover {
+      color: @icon-hover-color;
+    }
+
+    &.edc-on-dark {
+      color: @on-dark-color;
+      &:hover {
+        color: @on-dark-hover-color;
+      }
+    }
+    &.edc-icon-hidden {
+      visibility: hidden;
+    }
+    &.edc-icon-disabled {
+      color: @icon-disabled-color;
+      opacity: @icon-disabled-opacity;
+    }
+    &.edc-icon-error {
+      color: @icon-error-color;
+    }
+  }
+}
