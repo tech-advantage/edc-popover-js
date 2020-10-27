@@ -22,21 +22,16 @@ module.exports = {
 
         const proposalClassProperty = options.plugins[3][1];
         proposalClassProperty.loose = true;
-        // decoratorOptions.legacy = false;
-        // decoratorOptions.decoratorsBeforeExport = true;
         return {
         ...options,
-        // any extra options you want to set
     }},
-    webpackFinal: async (config, { configType }) => {
+    webpackFinal: async (config) => {
         // Add a loader for the less files
         config.module.rules.push({
             test: /\.less$/,
             use: ['style-loader', 'css-loader', 'less-loader'],
             include: path.resolve(__dirname, '../'),
         });
-
-        // Return the altered config
         return config;
     },
 
