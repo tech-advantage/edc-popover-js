@@ -1,6 +1,6 @@
 {
   "name": "edc-popover-js",
-  "version": "2.0.0-beta-0",
+  "version": "2.0.0",
   "description": "Popover component for edc to display contextual help",
   "main": "dist/index.js",
   "types": "dist/src/index.d.ts",
@@ -12,7 +12,7 @@
     "build-storybook": "build-storybook"
   },
   "dependencies": {
-    "edc-popover-utils": "^1.0.0-beta-2",
+    "edc-popover-utils": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.3.0"
   },
