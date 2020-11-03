@@ -290,3 +290,24 @@ Here is the en.json file used by default:
   }
 }
 ```
+
+## Storybook
+
+edc-popover-js uses [Storybook](https://storybook.js.org/) for isolated UI components and features testing:
+
+Install dependencies and run storybook, with `npm`
+```bash
+npm install
+```
+```bash
+npm run storybook
+```
+
+Or with `yarn`
+
+```bash
+yarn install
+```
+```bash
+yarn storybook
+```
