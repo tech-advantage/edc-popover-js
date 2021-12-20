@@ -53,7 +53,7 @@ export const addElementClasses = (element: HTMLElement, classNames: string | str
  * @param element the element to update
  * @param style the given style object
  */
-export const addElementStyle = (element: HTMLElement, style: Partial<CSSStyleDeclaration>): void => {
+export const addElementStyle = (element: HTMLElement, style: Partial<CSSStyleDeclaration> | null): void => {
     if (!element || !style) {
         return;
     }
@@ -74,7 +74,7 @@ export const removeElementsByClass = (className: string): void => {
     if (!elements || !elements.length) {
         return;
     }
-    while (elements.length > 0){
+    while (elements.length > 0 && elements[0].parentNode) {
         // Remove current element from parent's childNodes - Child nodes are live node lists
         elements[0].parentNode.removeChild(elements[0]);
     }
@@ -87,7 +87,7 @@ export const removeElementsByClass = (className: string): void => {
  * @param srcElement the element to process if provided
  * @param tagName the tag for the new element if source was not defined
  */
-export const getCleanElement = (srcElement: HTMLElement, tagName = ICON_TAG_NAME): HTMLElement => {
+export const getCleanElement = (srcElement: HTMLElement | null | undefined, tagName = ICON_TAG_NAME): HTMLElement => {
     let el: HTMLElement;
     if (srcElement) {
         // Clear all the previous classes and style

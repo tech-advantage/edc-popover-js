@@ -36,15 +36,13 @@ const HelpCustomStyle = {
         }
     }
 };
-const edcLogoUrl = 'https://www.easydoccontents.com/wp-content/uploads/2016/03/edc_site_logo-1.png';
-// https://iconsplace.com/wp-content/uploads/_icons/ffa500/256/png/help-icon-11-256.png
-// https://www.easydoccontents.com/wp-content/uploads/2016/03/edc_site_logo-1.png
-const defaultValues = { dark: false, class: DEFAULT_ICON, url: edcLogoUrl, height: 38, width: 89 };
+const edcLogoUrl = 'https://iconsplace.com/wp-content/uploads/_icons/ffa500/256/png/help-icon-11-256.png';
+const defaultValues = { dark: false, class: DEFAULT_ICON, url: edcLogoUrl, height: 38, width: 38 };
 const Template = ({ dark, class: className, url, height, width }) => {
     const iconConfig = { ...PopoverIcon.create(), class: className, url, height, width };
     const options = copyDefinedProperties<EdcPopoverOptions>(new EdcPopoverOptions(), { dark, icon: iconConfig } as any);
-    const edcProperties = { mainKey:'fr.techad.edc', subKey: 'help.center', options };
-    const container = createStoryContainer('200px', '120px', 'center', dark);
+    const edcProperties = { mainKey: 'fr.techad.edc', subKey: 'help.center', options };
+    const container = createStoryContainer('120px', '120px', 'center', dark);
     const parent1 = document.createElement('div');
     EdcPopover.config(edcConfig);
     EdcPopover.create(parent1, edcProperties);
@@ -52,7 +50,7 @@ const Template = ({ dark, class: className, url, height, width }) => {
     return container;
 };
 
-export const EdcMainKey = Template.bind({});
+export const EdcMainKey = Template.bind({}) as any;
 EdcMainKey.args = defaultValues;
 
 export default HelpCustomStyle;

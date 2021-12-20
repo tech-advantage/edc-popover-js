@@ -85,7 +85,7 @@ export class EdcPopover {
             throw new Error('No Edc popover configuration found, please provide your configuration using EdcPopover.config(yourConfiguration)');
         }
         if (!parent) {
-            return null;
+            return;
         }
         EdcPopover.instance.appendTrigger(parent, resolveEdcProperties(parent, props));
     }
@@ -134,7 +134,7 @@ export class EdcPopover {
      * @param props the properties to use for the popover trigger element
      * @private
      */
-    private appendTrigger(parent: HTMLElement, props: EdcProperties): void {
+    private appendTrigger(parent: HTMLElement, props: EdcProperties | null): void {
         if (!props) {
             return;
         }
@@ -159,7 +159,7 @@ export class EdcPopover {
         if (!config || !parent) {
             return;
         }
-        const triggerEl: HTMLElement = prepareTriggerElement(parent, props);
+        const triggerEl: HTMLElement | null = prepareTriggerElement(parent, props);
         if (!triggerEl || !props) {
             // Could not generate a new trigger element, parent or props missing.
             return;

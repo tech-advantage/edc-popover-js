@@ -1,4 +1,4 @@
-import { EdcPopoverOptions, EdcProperties, FailBehavior } from '../class';
+import { EdcPopoverOptions, FailBehavior } from '../class';
 import EdcPopover from '../index';
 import { IconBehavior, PopoverBehavior } from '../class/fail-behavior';
 import { edcConfig } from './edc-config';
@@ -27,12 +27,12 @@ const defaultValues = { icon: IconBehavior.SHOWN, popover: PopoverBehavior.FRIEN
 const Template = ({ icon, popover }) => {
     const options = new EdcPopoverOptions();
     options.failBehavior = { ...new FailBehavior(), icon, popover };
-    const edcProperties = { mainKey:'fr.techad.edc', subKey: 'error.subkey', options };
+    const edcProperties = { mainKey: 'fr.techad.edc', subKey: 'error.subkey', options };
     const container = document.createElement('div');
     EdcPopover.config(edcConfig);
     EdcPopover.create(container, edcProperties);
     return container;
 };
 
-export const EdcHelpFailBehavior = Template.bind({});
+export const EdcHelpFailBehavior = Template.bind({}) as any;
 EdcHelpFailBehavior.args = defaultValues;

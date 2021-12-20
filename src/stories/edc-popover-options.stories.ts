@@ -79,7 +79,7 @@ const defaultValues = {
 };
 const Template = (srcOptions: EdcPopoverOptions) => {
     const options = copyDefinedProperties<EdcPopoverOptions>(new EdcPopoverOptions(), srcOptions);
-    const edcProperties = { mainKey:'fr.techad.edc', subKey: 'help.center', options };
+    const edcProperties = { mainKey: 'fr.techad.edc', subKey: 'help.center', options };
     const container = createStoryContainer();
     const parent1 = document.createElement('div');
     const parent2 = document.createElement('div');
@@ -91,5 +91,5 @@ const Template = (srcOptions: EdcPopoverOptions) => {
     return container;
 };
 
-export const EdcOptions = Template.bind({});
+export const EdcOptions = Template.bind({}) as any;
 EdcOptions.args = defaultValues;

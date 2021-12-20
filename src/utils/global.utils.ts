@@ -7,7 +7,7 @@
  * @param value the value to check against null or undefined
  */
 
-export const isNil = (value: any) => value === undefined || value === null;
+export const isNil = (value: unknown): value is null | undefined => value === undefined || value === null;
 // Note: could also use v == null, since null is loosely equal to undefined
 
 /**
@@ -21,22 +21,21 @@ export const isNil = (value: any) => value === undefined || value === null;
  * @param target the target object
  * @param src the object containing the source values
  */
-export const copyDefinedProperties = <T extends { [key: string]: any }>(target: T, src: T): T => {
-    if (!isObject(target)) {
+export const copyDefinedProperties = <T>(target: T | null, src: T | null | undefined): T | null => {
+    if (!isObject<T>(target)) {
         return null;
     }
     // Create a shallow copy of the target
-    const newTarget: T = Object.assign<T, T>({} as T, target);
-    if (!isObject(src)) {
+    const newTarget = Object.assign({}, target);
+    if (!isObject<T>(src)) {
         return newTarget;
     }
     // Copying the defined ones into the new target object
     return Object.keys(src)
-        .reduce<T>((memo: any, key: string) => {
+        .reduce<T>((memo: T, key: string) => {
             // Copy values from src into target only if they are defined
-            const value: any = src[key];
-            if (src.hasOwnProperty(key) && !isNil(value)) {
-                memo[key] = value;
+            if (hasOwnProperty(src, key) && !isNil(src[key])) {
+                memo[key] = src[key];
             }
             return memo;
         }, newTarget);
@@ -47,14 +46,14 @@ export const copyDefinedProperties = <T extends { [key: string]: any }>(target: 
  *
  * @param value true if value is defined and equals false
  */
-export const isFalse = (value: boolean): boolean => !isNil(value) && !value;
+export const isFalse = (value: boolean): value is false => !isNil(value) && !value;
 
 /**
  * Returns true if value is an object not null
  *
  * @param obj to object to check
  */
-export const isObject = (obj: any): boolean => typeof obj === 'object' && obj !== null;
+export const isObject = <T extends unknown>(obj: T | null | undefined): obj is T => typeof obj === 'object' && obj !== null;
 
 /**
  * Parses the given string into an object
@@ -64,7 +63,7 @@ export const isObject = (obj: any): boolean => typeof obj === 'object' && obj !=
  * @param source the string to parse
  * @param errMessage the message to display if JSON format was not valid
  */
-export const parseJSON = <T>(source: string, errMessage = 'Could not parse JSON, format not valid'): T => {
+export const parseJSON = <T>(source: string | null | undefined, errMessage = 'Could not parse JSON, format not valid'): T | null => {
     if (!source || !source.trim().length) {
         return null;
     }
@@ -77,3 +76,12 @@ export const parseJSON = <T>(source: string, errMessage = 'Could not parse JSON,
     }
     return parsed;
 };
+
+/**
+ * Returns true if object has given property
+ *
+ * @param obj the object to check
+ * @param prop the object property
+ */
+export const hasOwnProperty = <X>(obj: X, prop: PropertyKey): prop is keyof X =>
+    !!obj && Object.prototype.hasOwnProperty.call(obj, prop);

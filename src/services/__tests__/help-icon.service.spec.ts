@@ -25,7 +25,10 @@ describe('HelpIcon service test', () => {
     })
 
     beforeEach(() => {
-        labels = { ...DEFAULT_LABELS.get('en') };
+        const englishLabels = DEFAULT_LABELS.get('en');
+        if (englishLabels) {
+            labels = { ...englishLabels };
+        }
     });
 
     describe('getTooltip', () => {
@@ -71,7 +74,7 @@ describe('HelpIcon service test', () => {
         });
         it('should return error icon classes', () => {
             // Given icon classes are not defined but some error classes are
-            iconConfig.iconClasses = undefined;
+            iconConfig.iconClasses = [];
             iconConfig.errorClasses = [IconClass.DISABLED];
 
             // When calling getIconClasses()
@@ -82,8 +85,8 @@ describe('HelpIcon service test', () => {
         });
         it('should return empty array', () => {
             // Given icon classes are not defined
-            iconConfig.iconClasses = undefined;
-            iconConfig.errorClasses = undefined;
+            iconConfig.iconClasses = [];
+            iconConfig.errorClasses = [];
 
             // When calling getIconClasses() with undefined values
             expect(helpIconService.getIconClasses(undefined)).toEqual([]);
