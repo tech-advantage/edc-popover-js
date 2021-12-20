@@ -1,15 +1,20 @@
 import { EdcPopover } from '../edc-popover';
 import { HelpConfigService } from '../services/help-config.service';
 import { EdcProperties, IconPopoverConfig } from '../class';
-import { EdcClient } from 'edc-client-js';
+import { Helper } from 'edc-client-js';
 import { provideService } from '../utils/test.utils';
 import { EdcPopoverConfiguration } from '../config';
 import { EDC_HELP_CLASS_NAME, EDC_HELP_CONTAINER_CLASS_NAME } from '../constants/style.constant';
 import { removeElementsByClass } from '../utils/dom.utils';
 import { PopoverPlacement } from 'edc-popover-utils';
 
-jest.mock('edc-client-js');
-const mockedEdcClient = <jest.Mock<EdcClient>>EdcClient;
+jest.mock('edc-client-js', () => {
+    return {
+            EdcClient: class {
+                getHelper = jest.fn().mockImplementation(() => Promise.resolve({} as Helper));
+            }
+        };
+});
 
 const iconPopoverConfig: IconPopoverConfig = new IconPopoverConfig();
 jest.mock('../services/help-config.service', () => ({
@@ -32,24 +37,29 @@ describe('Popover test', () => {
         './doc/i18n'
     );
     beforeEach(() => {
-        jest.spyOn(EdcClient.prototype, 'getHelper').mockImplementation(() => Promise.resolve({}));
-    });
-    beforeEach(() => {
         mockedConfigService = provideService(HelpConfigService);
         removeElementsByClass(EDC_HELP_CONTAINER_CLASS_NAME);
         EdcPopover.config(edcConfig);
     });
 
-    const mockParentElement = (mainKey: string,
-                               subKey: string,
-                               exportId?: string,
-                               lang?: string,
-                               options?: string,
-                               className?: string) => {
+    beforeEach(() => {
+        (mockedConfigService.buildPopoverConfig as any).mockClear();
+    });
+
+    const mockParentElement = (mainKey: string | null | undefined,
+                               subKey: string | null | undefined,
+                               exportId?: string | null | undefined,
+                               lang?: string | null | undefined,
+                               options?: string | null | undefined,
+                               className?: string | null | undefined) => {
         const parent = document.createElement('div');
 
-        parent.setAttribute('data-main-key', mainKey);
-        parent.setAttribute('data-sub-key', subKey);
+        if (mainKey) {
+            parent.setAttribute('data-main-key', mainKey);
+        }
+        if (subKey) {
+            parent.setAttribute('data-sub-key', subKey);
+        }
         if (exportId) {
             parent.setAttribute('data-plugin-id', exportId);
             parent.setAttribute('data-options', '{"placement": "top", "dark": true}');
@@ -136,8 +146,8 @@ describe('Popover test', () => {
         // MainKey, subKey
         it('should not break if main key or sub key are missing', () => {
             // Given the parent element has the data-main-key and data-sub-key attributes
-            const parentMainKeyInvalid = mockParentElement(null, 'my-sub-key');
-            const parentSubKeyInvalid = mockParentElement('my-main-key', null);
+            const parentMainKeyInvalid = mockParentElement('', 'my-sub-key');
+            const parentSubKeyInvalid = mockParentElement('my-main-key', '');
 
             EdcPopover.create(parentMainKeyInvalid);
             EdcPopover.create(parentSubKeyInvalid);
@@ -147,8 +157,8 @@ describe('Popover test', () => {
         it('should not break if options format is not correct', () => {
             // Given the parent element has the data-main-key and data-sub-key attributes
             const invalidJson = '{placement: "top"}';
-            const parentOptionsInvalid = mockParentElement('my-main-key', 'my-sub-key', null, null, invalidJson);
-            const parentOptionsNull = mockParentElement('my-main-key', 'my-sub-key', null, null, null);
+            const parentOptionsInvalid = mockParentElement('my-main-key', 'my-sub-key', '', '', invalidJson);
+            const parentOptionsNull = mockParentElement('my-main-key', 'my-sub-key', '', '', '');
             const parentOptionsUndefined = mockParentElement('my-main-key', 'my-sub-key');
 
             EdcPopover.create(parentOptionsInvalid);
@@ -183,12 +193,12 @@ describe('Popover test', () => {
 
         it('should create all Popovers with given class', async () => {
             // Given we have 3 popovers parents containers presents in the dom
-            const parent1 = mockParentElement('my-main-key', 'my-sub-key1', null, null, null, 'custom-class');
-            const parent2 = mockParentElement('my-main-key', 'my-sub-key2', null, null, null, 'custom-class');
-            const parent3 = mockParentElement('my-main-key', 'my-sub-key3', null, null, null, 'custom-class');
+            const parent1 = mockParentElement('my-main-key', 'my-sub-key1', '', '', '', 'custom-class');
+            const parent2 = mockParentElement('my-main-key', 'my-sub-key2', '', '', '', 'custom-class');
+            const parent3 = mockParentElement('my-main-key', 'my-sub-key3', '', '', '', 'custom-class');
             // And two other div with different class name
             const parentWithDefaultClass = mockParentElement('my-main-key', 'my-sub-key3');
-            const parentWithAnotherClass = mockParentElement('my-main-key', 'my-sub-key3', null, null, null, 'custom-class-2');
+            const parentWithAnotherClass = mockParentElement('my-main-key', 'my-sub-key3', '', '', '', 'custom-class-2');
             // All injected into the body
             document.body.append(parent1, parent2, parent3, parentWithDefaultClass, parentWithAnotherClass);
 
@@ -208,10 +218,10 @@ describe('Popover test', () => {
 
         it('create all should not break if one of the parent is not valid', async () => {
             // Given we have 3 popovers parents containers presents in the dom
-            const parent1 = mockParentElement('my-main-key', 'my-sub-key1', null, null, null, 'custom-class');
-            const parentWithWrongKey = mockParentElement(null, 'my-sub-key2', null, null, null, 'custom-class');
-            const parentWithWrongOptions = mockParentElement(null, 'my-sub-key2', null, null, '{notAValidJSON}', 'custom-class');
-            const parent2 = mockParentElement('my-main-key', 'my-sub-key3', null, null, null, 'custom-class');
+            const parent1 = mockParentElement('my-main-key', 'my-sub-key1', '', '', '', 'custom-class');
+            const parentWithWrongKey = mockParentElement('', 'my-sub-key2', '', '', '', 'custom-class');
+            const parentWithWrongOptions = mockParentElement('', 'my-sub-key2', '', '', '{notAValidJSON}', 'custom-class');
+            const parent2 = mockParentElement('my-main-key', 'my-sub-key3', '', '', '', 'custom-class');
 
             // All injected into the body
             document.body.append(parent1, parentWithWrongKey, parentWithWrongOptions, parent2);
@@ -251,15 +261,15 @@ describe('Popover test', () => {
             const parent1 = mockParentElement('my-main-key', 'my-sub-key1', null, null, '{ "placement": "bottom", "trigger": "mouseenter" }');
 
             // When creating a popover passing options as parameter, with one option property defined in the element data as well (here placement)
-            const props = new EdcProperties(null, null, null, null, { placement: PopoverPlacement.RIGHT });
+            const props = new EdcProperties('', '', '', '', { placement: PopoverPlacement.RIGHT });
             EdcPopover.create(parent1, props);
 
             // Then the options should have been merged, with the parameters overriding the ones from the dom element properties
             expect(mockedConfigService.buildPopoverConfig).toHaveBeenCalledWith(
-                'my-main-key',
-                'my-sub-key1',
-                undefined,
-                undefined,
+                '',
+                '',
+                '',
+                '',
                 // Placement should be right and not bottom, trigger should be equal to the data property value 'mouseenter'
                 expect.objectContaining({ placement: PopoverPlacement.RIGHT, trigger: 'mouseenter' })
             );

@@ -1,7 +1,6 @@
-import { Article, Helper, Link } from 'edc-client-js';
 import { container, Lifecycle } from 'tsyringe';
 
-export function provideService<T>(token: new (...args:any[]) => T, lifecycle = Lifecycle.Singleton): T {
+export function provideService<T>(token: new (...args: any[]) => T, lifecycle = Lifecycle.Singleton): T {
     if (container.isRegistered(token)) {
         return container.resolve<T>(token);
     }
@@ -19,26 +18,26 @@ export function mock<T>(type: new(...args: any[]) => T, object: any = {}): T {
  * Mock a documentation helper
  *
  */
-export function mockHelper(): Helper {
-    return mock(Helper, {
+export function mockHelper(): any {
+    return {
         label: 'MyTitle',
         description: 'MyDescription',
         articles: [
-            mock(Article, {
+            {
                 label: 'articleLabel1',
                 url: 'articleUrl1'
-            })
+            }
         ],
         links: [
-            mock(Link, {
+            {
                 id: 7,
                 label: 'linkLabel1',
                 url: 'linkUrl1'
-            })
+            }
         ],
         language: 'en',
         exportId: 'resolvedPluginId'
-    });
+    };
 }
 
 export const createStoryContainer = (width = '100%', height = '60px', justifyContent = 'space-between', dark?: boolean): HTMLDivElement => {
@@ -53,4 +52,4 @@ export const createStoryContainer = (width = '100%', height = '60px', justifyCon
         container.style.backgroundColor = '#999';
     }
     return container;
-}
+};

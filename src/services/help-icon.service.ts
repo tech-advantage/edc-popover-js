@@ -21,6 +21,13 @@ import { IconBehavior } from '../class/fail-behavior';
 @singleton()
 class HelpIconService {
 
+    // Define the classes associated with each behavior:
+    static readonly ERROR_ICON_CLASSES: Map<IconBehavior, IconClass> = new Map()
+        .set(IconBehavior.SHOWN, IconClass.NONE)
+        .set(IconBehavior.DISABLED, IconClass.DISABLED)
+        .set(IconBehavior.HIDDEN, IconClass.HIDDEN)
+        .set(IconBehavior.ERROR, IconClass.ERROR);
+
     constructor() {
     }
 
@@ -35,7 +42,7 @@ class HelpIconService {
      * @param options the popover options from the received input
      * @param labels the popover labels
      */
-    buildIconConfig(options: IEdcPopoverOptions, labels: PopoverLabel): IconConfig {
+    buildIconConfig(options: IEdcPopoverOptions, labels: PopoverLabel | null | undefined): IconConfig {
         const iconConfig: IconConfig = new IconConfig();
         // Get safe icon properties
         iconConfig.icon = this.buildPopoverIcon(options);
@@ -62,8 +69,8 @@ class HelpIconService {
      * @param displayTooltip true if tooltip should be displayed (from the popover options)
      * @param labels the translated labels containing the text for the tooltip
      */
-    getTooltip(displayTooltip: boolean, labels: PopoverLabels): string {
-        return (displayTooltip && !!labels) ? labels.iconAlt : '';
+    getTooltip(displayTooltip: boolean | undefined, labels: PopoverLabels | null | undefined): string {
+        return (displayTooltip && !!labels && !!labels.iconAlt) ? labels.iconAlt : '';
     }
 
     /**
@@ -77,11 +84,11 @@ class HelpIconService {
      *
      * @param iconConfig the icon configuration
      */
-    getIconClasses(iconConfig: IconConfig): string[] {
+    getIconClasses(iconConfig: IconConfig | null | undefined): string[] {
         if (!iconConfig) {
             return [];
         }
-        const classes = [];
+        const classes: string[] = [];
         if (iconConfig.iconClasses && iconConfig.iconClasses.length) {
             classes.push(...iconConfig.iconClasses);
         }
@@ -106,7 +113,7 @@ class HelpIconService {
      * @param options the popover options object, containing the options for the icon
      */
     buildIconClasses(icon: PopoverIcon, options: IEdcPopoverOptions): string[] {
-        const classes = [];
+        const classes: string[] = [];
         // Set dark class
         if (options && options.dark) {
             classes.push(DARK_CLASS_NAME);
@@ -130,7 +137,7 @@ class HelpIconService {
      *
      * @param icon the icon image to style
      */
-    getIconImageStyle(icon: PopoverIcon): Partial<CSSStyleDeclaration> {
+    getIconImageStyle(icon: PopoverIcon): Partial<CSSStyleDeclaration> | null {
         if (!icon || !icon.url) {
             return null;
         }
@@ -161,24 +168,23 @@ class HelpIconService {
      * @param options the popover options
      * @param labels the labels
      */
-    buildErrorIconConfig(options: IEdcPopoverOptions, labels: PopoverLabel): IconConfig {
+    buildErrorIconConfig(options: IEdcPopoverOptions, labels: PopoverLabel | null | undefined): IconConfig {
         // Build common icon config
-        const { icon: iconBehavior } = options.failBehavior;
+        const { icon: iconBehavior } = options.failBehavior ?? {};
         // If behavior for the icon is to display an error icon, update its class
-        if (iconBehavior === IconBehavior.ERROR) {
+        if (iconBehavior === IconBehavior.ERROR && options.icon) {
             options.icon.class = ERROR_ICON;
         }
         // Start building the main icon configuration
         const iconConfig = this.buildIconConfig(options, labels);
         // Define the classes associated with each behavior:
-        const errorClasses: Map<IconBehavior, IconClass> = new Map()
-            .set(IconBehavior.SHOWN, IconClass.NONE)
-            .set(IconBehavior.DISABLED, IconClass.DISABLED)
-            .set(IconBehavior.HIDDEN, IconClass.HIDDEN)
-            .set(IconBehavior.ERROR, IconClass.ERROR);
-        // Any specific error class to be added, according to the defined behavior
-        const errorClass = errorClasses.get(iconBehavior);
-        iconConfig.errorClasses = errorClass ? [errorClass] : [];
+        let errorClass: IconClass[] = [];
+        if (iconBehavior) {
+            const errClass = HelpIconService.ERROR_ICON_CLASSES.get(iconBehavior);
+            // Any specific error class to be added, according to the defined behavior
+            errorClass = errClass ? [errClass] : [];
+        }
+        iconConfig.errorClasses = errorClass;
         return iconConfig;
     }
 
@@ -199,6 +205,9 @@ class HelpIconService {
         }
         // Make a safe copy from default icon values
         const mergedIcons = copyDefinedProperties<PopoverIcon>(defaultIcon, options.icon);
+        if (!mergedIcons) {
+            return defaultIcon;
+        }
         // Check consistency and clean invalid properties
         if (!mergedIcons.url || !mergedIcons.url.trim()) {
             // url property must be null or undefined if not valid

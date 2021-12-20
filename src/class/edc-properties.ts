@@ -17,6 +17,6 @@ export class EdcProperties {
                 public subKey: string,
                 public pluginId?: string,
                 public lang?: string,
-                public options?: IEdcPopoverOptions) {
+                public options: IEdcPopoverOptions | null = null) {
     }
 }

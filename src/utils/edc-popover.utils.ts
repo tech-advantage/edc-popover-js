@@ -46,12 +46,12 @@ export const createPopover = (triggerEl: HTMLElement, config: IconPopoverConfig)
  * @param parent the parent html element, container for the trigger element
  * @param props the mandatory properties for the trigger element
  */
-export const prepareTriggerElement = (parent: HTMLElement, props: EdcProperties): HTMLElement => {
+export const prepareTriggerElement = (parent: HTMLElement, props: EdcProperties): HTMLElement | null => {
     if (!parent) {
         return null;
     }
     // Check for any existing trigger element in the given parent element, using the generic class name
-    const child: HTMLSpanElement = parent.querySelector<HTMLSpanElement>(`.${EDC_HELP_CLASS_NAME}`);
+    const child: HTMLSpanElement | null = parent.querySelector<HTMLSpanElement>(`.${EDC_HELP_CLASS_NAME}`);
 
     // If properties are missing, return null
     if (!props) {
@@ -81,7 +81,7 @@ export const prepareTriggerElement = (parent: HTMLElement, props: EdcProperties)
  * @param props the given properties to override for this parent
  * @private
  */
-export const resolveEdcProperties = (parent: HTMLElement, props: EdcProperties): EdcProperties => {
+export const resolveEdcProperties = (parent: HTMLElement, props: EdcProperties | null | undefined = null): EdcProperties | null => {
     if (!parent || !parent.dataset) {
         return props;
     }
@@ -101,7 +101,7 @@ export const resolveEdcProperties = (parent: HTMLElement, props: EdcProperties):
     // Override with values from props parameter
     const properties = copyDefinedProperties<EdcProperties>(propsFromElement, props);
     // If both are present, resolve options between the properties passed in the template and the ones from the parameters
-    if (optionsFromElement && props) {
+    if (properties && optionsFromElement && props) {
         properties.options = copyDefinedProperties<IEdcPopoverOptions>(optionsFromElement, props.options);
     }
     return properties;

@@ -1,18 +1,21 @@
 import { PopoverConfigurationHandler } from '../../config/popover-configuration.handler';
 import { HelpService } from '../help.service';
 import { provideService } from '../../utils/test.utils';
-import { EdcClient } from 'edc-client-js';
+import { Helper } from 'edc-client-js';
 import { EdcPopoverConfiguration } from '../../config';
-jest.mock('edc-client-js');
 
+const getHelperMock = jest.fn().mockImplementation(() => Promise.resolve({} as Helper));
+
+jest.mock('edc-client-js', () => {
+    return {
+        EdcClient: class {
+            getHelper = getHelperMock;
+        }
+    };
+});
 describe('Help service test', () => {
     let helpService: HelpService;
     let popoverConfigurationHandler: PopoverConfigurationHandler;
-    beforeEach(() => {
-        jest.spyOn(EdcClient.prototype, 'getHelper').mockImplementation(() => {
-            return Promise.resolve({});
-        });
-    });
 
     beforeEach(() => {
         popoverConfigurationHandler = provideService<PopoverConfigurationHandler>(PopoverConfigurationHandler);
@@ -33,7 +36,7 @@ describe('Help service test', () => {
             helpService.getHelp('mainKey', 'subKey').then(() => {
             });
 
-            expect(EdcClient.prototype.getHelper).toHaveBeenCalledWith('mainKey', 'subKey', 'edc', undefined);
+            expect(getHelperMock).toHaveBeenCalledWith('mainKey', 'subKey', 'edc', undefined);
         });
 
         it('should use "edc2" as plugin identifier', () => {
@@ -42,7 +45,7 @@ describe('Help service test', () => {
             helpService.getHelp('mainKey', 'subKey', 'edc2').then(() => {
             });
 
-            expect(EdcClient.prototype.getHelper).toHaveBeenCalledWith('mainKey', 'subKey', 'edc2', undefined);
+            expect(getHelperMock).toHaveBeenCalledWith('mainKey', 'subKey', 'edc2', undefined);
         });
     });
 });
